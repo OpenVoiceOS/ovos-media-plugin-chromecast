@@ -15,7 +15,7 @@ chromecast plugin for [ovos-media](https://github.com/OpenVoiceOS/ovos-media)
     // PlaybackType.AUDIO handlers
     "audio_players": {
         // chromecast player uses a headless chromecast instance to handle uris
-        "chromecast": {
+        "kitchen_chromecast": {
             // the plugin name
             "module": "ovos-media-audio-plugin-chromecast",
             
@@ -34,7 +34,7 @@ chromecast plugin for [ovos-media](https://github.com/OpenVoiceOS/ovos-media)
     // PlaybackType.VIDEO handlers
     "video_players": {
         // chromecast player uses a headless chromecast instance to handle uris
-        "chromecast": {
+        "living_room_chromecast": {
             // the plugin name
             "module": "ovos-media-video-plugin-chromecast",
 
