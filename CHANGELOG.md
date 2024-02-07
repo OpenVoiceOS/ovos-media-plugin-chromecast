@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/HEAD)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/8a12f9280dcf3ebff50206368f7318ac46092014...HEAD)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/V0.1.0a2...HEAD)
+
+**Implemented enhancements:**
+
+- feat/metadata [\#4](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/4) ([NeonJarbas](https://github.com/NeonJarbas))
+
+## [V0.1.0a2](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/V0.1.0a2) (2024-02-06)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/8a12f9280dcf3ebff50206368f7318ac46092014...V0.1.0a2)
 
 **Implemented enhancements:**
 
