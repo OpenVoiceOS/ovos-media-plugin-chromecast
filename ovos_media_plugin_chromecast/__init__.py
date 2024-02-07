@@ -180,18 +180,24 @@ class ChromecastBaseService(MediaBackend):
 
         self.meta = {"name": self.identifier,
                      "uri": None,
+                     "title": self.identifier,
+                     "thumbnail": "", # TODO default icon
                      "duration": 0,
                      "playback": PlaybackType.VIDEO if self.video else PlaybackType.AUDIO}
         self.is_playing = False
         self.ts = 0
 
+    def load_track(self, uri, metadata: dict = None):
+        super().load_track(uri)
+        if metadata:
+            self.meta["title"] = metadata.get("title", self.identifier)
+            self.meta["thumbnail"] = metadata.get("thumbnail", "")
+            self.meta["duration"] = metadata.get("duration", 0)
+
     def reset_metadata(self):
         self.is_playing = False  # not plugin initiated
         self.ts = 0
-        self.meta = {"name": self.identifier,
-                     "uri": None,
-                     "duration": 0,
-                     "playback": PlaybackType.VIDEO if self.video else PlaybackType.AUDIO}
+        self.meta["uri"] = None
 
     def on_track_start(self, data):
         if not self.is_playing:
@@ -219,7 +225,7 @@ class ChromecastBaseService(MediaBackend):
         # check if this is our track, trigger callback
         if data["uri"] == self._now_playing and data != self.meta:
             LOG.info(f"Chromecast playback started: {data}")
-            self.meta = data
+            self.meta.update(data)
             self.ts = time.time()
             if self._track_start_callback:
                 self._track_start_callback(self.track_info().get('name', f"{self.identifier} Chromecast"))
@@ -266,14 +272,13 @@ class ChromecastBaseService(MediaBackend):
 
         cast.wait()  # Make sure the device is ready to receive command
 
-        track = self._now_playing
-        self.meta = {"name": self.identifier,
-                     "playback": PlaybackType.VIDEO if self.video else PlaybackType.AUDIO,
-                     "uri": track}
+        self.meta["uri"] = track = self._now_playing
 
         mime = guess_type(track)[0] or 'audio/mp3'
         self.is_playing = True
-        cast.media_controller.play_media(track, mime)
+        cast.media_controller.play_media(track, mime,
+                                         thumb=self.meta.get("thumbnail"),
+                                         title=self.meta.get("title", track.split("/")[-1]))
 
     def stop(self):
         """ Stop playback and quit app. """
@@ -347,6 +352,8 @@ if __name__ == "__main__":
     from ovos_utils.fakebus import FakeBus
 
     s = ChromecastOCPAudioService({"identifier": 'Side door TV'}, bus=FakeBus())
+    s.set_metadata({"title": "Spores: Growth",
+                    "thumbnail": "https://ia801302.us.archive.org/30/items/SporesBBCr4/Spores.jpg?cnt=0"})
     s.load_track("https://archive.org/download/SporesBBCr4/1%20Growth.mp3")
     time.sleep(5)
     s.play()
