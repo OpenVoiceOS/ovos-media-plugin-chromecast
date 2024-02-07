@@ -2,6 +2,13 @@
 
 chromecast plugin for [ovos-media](https://github.com/OpenVoiceOS/ovos-media)
 
+
+## MPRIS
+
+This plugin only allows you to initiate playback in a chromecast, if you want to control your chromecasts when playback is initiated externally, you can install [cast_control](https://github.com/alexdelorenzo/cast_control) on your system to provide a MPRIS interface
+
+ovos-media will then be able to seamlessly integrate with your chromecast at all times
+
 ## Install
 
 `pip install ovos-media-plugin-chromecast`
