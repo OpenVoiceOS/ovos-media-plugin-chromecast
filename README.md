@@ -24,7 +24,7 @@ This script will auto configure chromecast devices under your mycroft.conf
 Make sure your devices are turned on and connected to the same Wifi as you, otherwise discovery will fail
 
 Scanning...
-    - Found Chromecast: Side door TV - 192.168.1.17:8009
+    - Found Chromecast: Bedroom TV - 192.168.1.17:8009
 
 Found devices: ['Bedroom TV']
 
