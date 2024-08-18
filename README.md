@@ -1,7 +1,10 @@
 # ovos-media-plugin-chromecast
 
-chromecast plugin for [ovos-media](https://github.com/OpenVoiceOS/ovos-media)
+chromecast plugin for [ovos-audio](https://github.com/OpenVoiceOS/ovos-audio) and [ovos-media](https://github.com/OpenVoiceOS/ovos-media)
 
+## Install
+
+`pip install ovos-media-plugin-chromecast`
 
 ## MPRIS
 
@@ -11,11 +14,58 @@ This plugin only allows you to initiate playback in a chromecast, if you want to
 
 ovos-media will then be able to seamlessly integrate with your chromecast at all times
 
-## Install
-
-`pip install ovos-media-plugin-chromecast`
-
 ## Configuration
+
+The easiest way is to use the provided `ovos-chromecast-autoconfigure` command
+
+```bash
+$ ovos-chromecast-autoconfigure
+This script will auto configure chromecast devices under your mycroft.conf
+Make sure your devices are turned on and connected to the same Wifi as you, otherwise discovery will fail
+
+Scanning...
+    - Found Chromecast: Bedroom TV - 192.168.1.17:8009
+
+Found devices: ['Bedroom TV']
+
+mycroft.conf updated!
+
+# Legacy Audio Service:
+{'backends': {'chromecast-bedroom-tv': {'active': True,
+                                        'identifier': 'Bedroom TV',
+                                        'type': 'ovos_chromecast'}}}
+
+# ovos-media Service:
+{'audio_players': {'chromecast-bedroom-tv': {'active': True,
+                                             'aliases': ['Bedroom TV'],
+                                             'identifier': 'Bedroom TV',
+                                             'module': 'ovos-media-audio-plugin-chromecast'}}},
+ 'video_players': {'chromecast-bedroom-tv': {'active': True,
+                                             'aliases': ['Bedroom TV'],
+                                             'identifier': 'Bedroom TV',
+                                             'module': 'ovos-media-video-plugin-chromecast'}}}
+```
+
+### ovos-audio
+
+```javascript
+{
+  "Audio": {
+    "backends": {
+      "my_chromecast": {
+        "type": "ovos_chromecast",
+        "identifier": "device_name_in_chromecast",
+        "active": true
+      }
+    }
+  }
+}
+```
+
+
+### ovos-media
+
+> **WARNING**: `ovos-media' has not yet been released, WIP
 
 ```javascript
 {
