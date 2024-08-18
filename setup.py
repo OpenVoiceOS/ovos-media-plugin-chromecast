@@ -50,8 +50,9 @@ def required(requirements_file):
                 if pkg.strip() and not pkg.startswith("#")]
 
 
-PLUGIN_ENTRY_POINT = 'ovos-media-audio-plugin-chromecast=ovos_media_plugin_chromecast:ChromecastOCPAudioService'
-VIDEO_ENTRY_POINT = 'ovos-media-video-plugin-chromecast=ovos_media_plugin_chromecast:ChromecastOCPVideoService'
+PLUGIN_ENTRY_POINT = 'ovos-media-audio-plugin-chromecast=ovos_media_plugin_chromecast.media:ChromecastOCPAudioService'
+VIDEO_ENTRY_POINT = 'ovos-media-video-plugin-chromecast=ovos_media_plugin_chromecast.media:ChromecastOCPVideoService'
+OLD_PLUGIN_ENTRY_POINT = 'ovos_chromecast=ovos_media_plugin_chromecast.audio:ChromecastAudioService'
 
 setup(
     name='ovos-media-plugin-chromecast',
@@ -65,6 +66,11 @@ setup(
     install_requires=required("requirements/requirements.txt"),
     package_data={'': package_files('ovos_media_plugin_chromecast')},
     keywords='ovos audio video OCP plugin',
-    entry_points={'opm.media.audio': PLUGIN_ENTRY_POINT,
-                  'opm.media.video': VIDEO_ENTRY_POINT}
+    entry_points={
+        'mycroft.plugin.audioservice': OLD_PLUGIN_ENTRY_POINT,
+        'opm.media.audio': PLUGIN_ENTRY_POINT,
+        'opm.media.video': VIDEO_ENTRY_POINT,
+        'console_scripts': [
+            'ovos-chromecast-autoconfigure=ovos_media_plugin_chromecast.autoconfigure:main'
+        ]}
 )
