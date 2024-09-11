@@ -54,10 +54,15 @@ PLUGIN_ENTRY_POINT = 'ovos-media-audio-plugin-chromecast=ovos_media_plugin_chrom
 VIDEO_ENTRY_POINT = 'ovos-media-video-plugin-chromecast=ovos_media_plugin_chromecast.media:ChromecastOCPVideoService'
 OLD_PLUGIN_ENTRY_POINT = 'ovos_chromecast=ovos_media_plugin_chromecast.audio:ChromecastAudioService'
 
+with open(os.path.join(BASEDIR, "README.md"), "r") as f:
+    long_description = f.read()
+
 setup(
     name='ovos-media-plugin-chromecast',
     version=get_version(),
     description='chromecast plugin for ovos',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url='https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast',
     author='JarbasAi',
     author_email='jarbasai@mailfence.com',
