@@ -1,8 +1,16 @@
 # Changelog
 
-## [Unreleased](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/HEAD)
+## [0.1.0a5](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.0a5) (2024-09-11)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/V0.1.0a3...HEAD)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/V0.1.0a4...0.1.0a5)
+
+**Merged pull requests:**
+
+- feat:semver [\#6](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/6) ([JarbasAl](https://github.com/JarbasAl))
+
+## [V0.1.0a4](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/V0.1.0a4) (2024-08-18)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/V0.1.0a3...V0.1.0a4)
 
 **Implemented enhancements:**
 
