@@ -58,7 +58,7 @@ with open(os.path.join(BASEDIR, "README.md"), "r") as f:
     long_description = f.read()
 
 setup(
-    name='ovos-media-plugin-chromecast',
+    name='ovos_media_plugin_chromecast',
     version=get_version(),
     description='chromecast plugin for ovos',
     long_description=long_description,
