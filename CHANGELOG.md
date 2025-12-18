@@ -1,12 +1,12 @@
 # Changelog
 
-## [0.1.3a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.3a1) (2025-11-05)
+## [0.1.4a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a1) (2025-12-18)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.2...0.1.3a1)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.3...0.1.4a1)
 
 **Merged pull requests:**
 
-- Update requirements.txt [\#10](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/10) ([JarbasAl](https://github.com/JarbasAl))
+- chore: Configure Renovate [\#12](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/12) ([renovate[bot]](https://github.com/apps/renovate))
 
 
 
