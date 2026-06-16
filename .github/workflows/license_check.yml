@@ -9,3 +9,10 @@ jobs:
   license_check:
     uses: OpenVoiceOS/gh-automations/.github/workflows/license-check.yml@dev
     secrets: inherit
+    with:
+      # zeroconf is LGPL-2.1 (WeakCopyleft). It is imported and used unmodified as
+      # a library — LGPL imposes no copyleft on the importing application — and is
+      # required for Chromecast (mDNS) discovery, with no permissive equivalent.
+      # Safe to use as a library.
+      exclude_packages: >-
+        (?i:^zeroconf([=<>!~ @;].*)?$)
