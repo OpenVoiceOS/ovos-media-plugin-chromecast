@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4a8](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a8) (2026-06-17)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a3...0.1.4a8)
+
+**Merged pull requests:**
+
+- chore: add missing shared CI workflows [\#22](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/22) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.4a3](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a3) (2025-12-19)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a2...0.1.4a3)
