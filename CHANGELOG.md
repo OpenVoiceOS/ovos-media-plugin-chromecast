@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4a9](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a9) (2026-06-25)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a8...0.1.4a9)
+
+**Merged pull requests:**
+
+- test: contract tests for new + legacy backends [\#25](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/25) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.4a8](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a8) (2026-06-17)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a3...0.1.4a8)
