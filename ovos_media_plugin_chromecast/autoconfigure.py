@@ -1,7 +1,7 @@
 from pprint import pprint
 
 import pychromecast
-from ovos_config.config import MycroftUserConfig
+from ovos_config.config import UserConfig
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     for cast in casts:
         print(f"    - Found Chromecast: {cast.cast_info.friendly_name} - {cast.cast_info.host}:{cast.cast_info.port}")
 
-    cfg = MycroftUserConfig()
+    cfg = UserConfig()
 
     devices = [cast.cast_info.friendly_name for cast in casts]
     if not devices:
