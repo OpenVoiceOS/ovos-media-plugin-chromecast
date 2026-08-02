@@ -131,19 +131,33 @@ class TestEntryPoints(unittest.TestCase):
 
     def test_setup_declares_new_and_legacy_groups(self):
         import os
+        try:
+            import tomllib
+        except ImportError:  # pragma: no cover - py<3.11
+            import tomli as tomllib
+
         here = os.path.dirname(os.path.dirname(__file__))
-        with open(os.path.join(here, "setup.py")) as f:
-            setup_src = f.read()
-        self.assertIn("opm.media.audio", setup_src)
-        self.assertIn("opm.media.video", setup_src)
-        self.assertIn("mycroft.plugin.audioservice", setup_src)
+        with open(os.path.join(here, "pyproject.toml"), "rb") as f:
+            pyproject = tomllib.load(f)
+
+        entry_points = pyproject["project"]["entry-points"]
+
+        self.assertIn("opm.media.audio", entry_points)
+        self.assertIn("opm.media.video", entry_points)
+        self.assertIn("mycroft.plugin.audioservice", entry_points)
+
+        self.assertEqual(
+            entry_points["opm.media.audio"].get(
+                "ovos-media-audio-plugin-chromecast"),
+            "ovos_media_plugin_chromecast.media:ChromecastOCPAudioService")
+        self.assertEqual(
+            entry_points["opm.media.video"].get(
+                "ovos-media-video-plugin-chromecast"),
+            "ovos_media_plugin_chromecast.media:ChromecastOCPVideoService")
         self.assertIn(
-            "ovos_media_plugin_chromecast.media:ChromecastOCPAudioService",
-            setup_src)
-        self.assertIn(
-            "ovos_media_plugin_chromecast.media:ChromecastOCPVideoService",
-            setup_src)
-        self.assertIn("ovos_media_plugin_chromecast.audio", setup_src)
+            "ovos_media_plugin_chromecast.audio",
+            entry_points["mycroft.plugin.audioservice"].get(
+                "ovos_chromecast", ""))
 
 
 if __name__ == "__main__":
