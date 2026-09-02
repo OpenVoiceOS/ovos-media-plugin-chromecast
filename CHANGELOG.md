@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a1) (2026-09-02)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a12...0.1.5a1)
+
+**Merged pull requests:**
+
+- fix: report natural track end and honour the stop contract [\#34](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/34) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.4a12](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a12) (2026-08-02)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a11...0.1.4a12)
