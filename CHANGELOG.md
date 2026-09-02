@@ -1,12 +1,76 @@
 # Changelog
 
-## [0.1.3a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.3a1) (2025-11-05)
+## [0.1.5a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a1) (2026-09-02)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.2...0.1.3a1)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a12...0.1.5a1)
 
 **Merged pull requests:**
 
-- Update requirements.txt [\#10](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/10) ([JarbasAl](https://github.com/JarbasAl))
+- fix: report natural track end and honour the stop contract [\#34](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/34) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.4a12](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a12) (2026-08-02)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a11...0.1.4a12)
+
+**Merged pull requests:**
+
+- refactor: use the current ovos-config class names [\#30](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/30) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.4a11](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a11) (2026-07-31)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a10...0.1.4a11)
+
+**Merged pull requests:**
+
+- docs: rewrite README in Simplified Technical English [\#31](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/31) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.4a10](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a10) (2026-06-25)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a9...0.1.4a10)
+
+**Merged pull requests:**
+
+- test: end-to-end test via ovoscope OCPPlayerHarness [\#27](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/27) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.4a9](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a9) (2026-06-25)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a8...0.1.4a9)
+
+**Merged pull requests:**
+
+- test: contract tests for new + legacy backends [\#25](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/25) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.4a8](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a8) (2026-06-17)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a3...0.1.4a8)
+
+**Merged pull requests:**
+
+- chore: add missing shared CI workflows [\#22](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/22) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.4a3](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a3) (2025-12-19)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a2...0.1.4a3)
+
+**Merged pull requests:**
+
+- chore\(deps\): update dependency python to 3.14 [\#14](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/14) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [0.1.4a2](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a2) (2025-12-19)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a1...0.1.4a2)
+
+**Merged pull requests:**
+
+- chore\(deps\): update actions/setup-python action to v6 [\#17](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/17) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [0.1.4a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.4a1) (2025-12-18)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.3...0.1.4a1)
+
+**Merged pull requests:**
+
+- chore: Configure Renovate [\#12](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/12) ([renovate[bot]](https://github.com/apps/renovate))
 
 
 
