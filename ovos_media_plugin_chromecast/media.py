@@ -106,9 +106,14 @@ class ChromecastBaseService(MediaBackend):
             LOG.info(f"End of media: {data}")
             self.reset_metadata()
 
-        self._now_playing = None
         if self._track_start_callback:
             self._track_start_callback(None)
+        # natural end-of-media (chromecast reported end on its own, no
+        # stop() requested by us) - ocp_stop() is idempotent (no-ops once
+        # self._now_playing is None), so it is safe to call here even
+        # when stop() already triggered it; this is the only path that
+        # reports a *natural* end-of-media upward
+        self.ocp_stop()
 
     def on_track_error(self, data):
         if not self.is_playing:
