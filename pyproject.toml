@@ -14,7 +14,8 @@ authors = [
 keywords = ["ovos", "audio", "video", "OCP", "plugin"]
 dependencies = [
     "ovos-config>=0.0.12,<3.0.0",
-    "ovos-plugin-manager>=2.1.0,<3.0.0",
+    # bump to >=3.0.0a1,<4.0.0 at v2 release
+    "ovos-plugin-manager>=2.11.6a1,<4.0.0",
     "pychromecast",
     "zeroconf"
 ]
