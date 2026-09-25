@@ -24,8 +24,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 try:
-    from ovoscope import OCPPlayerHarness
     from ovos_utils.ocp import MediaEntry, PlaybackType, PlayerState
+    from ovoscope import OCPPlayerHarness
     HAVE_HARNESS = True
 except Exception:
     HAVE_HARNESS = False

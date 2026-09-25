@@ -10,7 +10,6 @@ import sys
 import unittest
 from unittest.mock import MagicMock
 
-
 # --- mock pychromecast/zeroconf so the plugin imports without real deps -----
 # CastListener subclasses pychromecast.discovery.AbstractCastListener, so that
 # base must be a *real* class (a MagicMock base would swallow the subclass's
@@ -30,17 +29,19 @@ sys.modules.setdefault("pychromecast.controllers.media",
 sys.modules.setdefault("pychromecast.discovery", _pychromecast.discovery)
 sys.modules.setdefault("zeroconf", MagicMock())
 
-from ovos_plugin_manager.templates.media import (
-    RemoteAudioPlayerBackend, RemoteVideoPlayerBackend)
 from ovos_plugin_manager.templates.audio import AudioBackend
+from ovos_plugin_manager.templates.media import (
+    RemoteAudioPlayerBackend,
+    RemoteVideoPlayerBackend,
+)
 
-from ovos_media_plugin_chromecast.media import (
-    ChromecastBaseService, ChromecastOCPAudioService,
-    ChromecastOCPVideoService)
-from ovos_media_plugin_chromecast.audio import (
-    ChromecastAudioService, load_service)
+from ovos_media_plugin_chromecast.audio import ChromecastAudioService, load_service
 from ovos_media_plugin_chromecast.ccast import CastListener
-
+from ovos_media_plugin_chromecast.media import (
+    ChromecastBaseService,
+    ChromecastOCPAudioService,
+    ChromecastOCPVideoService,
+)
 
 # the backends require an 'identifier' in config and look the device up in
 # CastListener.found_devices; seed a fake device so supported_uris() works

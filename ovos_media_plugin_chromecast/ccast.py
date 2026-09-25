@@ -1,9 +1,8 @@
 import pychromecast
 import pychromecast.controllers.media
 import zeroconf
-
 from ovos_utils.log import LOG
-from ovos_utils.ocp import PlayerState, PlaybackType
+from ovos_utils.ocp import PlaybackType, PlayerState
 
 
 class CastListener(pychromecast.discovery.AbstractCastListener):
@@ -73,7 +72,7 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
             self.playback = PlaybackType.AUDIO
         else:
             self.playback = PlaybackType.VIDEO
-        if status.player_state in ["PLAYING", 'BUFFERING']:
+        if status.player_state in ["PLAYING", 'BUFFERING']:  # noqa: SIM114
             state = PlayerState.PLAYING
         elif status.player_state == "PAUSED":
             state = PlayerState.PLAYING

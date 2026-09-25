@@ -29,8 +29,8 @@ sys.modules.setdefault("zeroconf", MagicMock())
 from ovos_utils.fakebus import FakeBus
 from ovos_utils.ocp import MediaState, PlayerState
 
-from ovos_media_plugin_chromecast.media import ChromecastOCPAudioService
 from ovos_media_plugin_chromecast.ccast import CastListener
+from ovos_media_plugin_chromecast.media import ChromecastOCPAudioService
 
 _IDENTIFIER = "Living Room TV"
 _CFG = {"identifier": _IDENTIFIER}
