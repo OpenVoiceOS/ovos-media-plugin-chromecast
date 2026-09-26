@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ovos_media_plugin_chromecast"
+dynamic = ["version"]
+description = "chromecast plugin for ovos"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "JarbasAi", email = "jarbasai@mailfence.com"}
+]
+keywords = ["ovos", "audio", "video", "OCP", "plugin"]
+dependencies = [
+    "ovos-config>=0.0.12,<3.0.0",
+    "ovos-plugin-manager>=2.1.0,<3.0.0",
+    "pychromecast",
+    "zeroconf"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    # end-to-end harness: drives the real backend through a real OCPMediaPlayer.
+    # [media] (the OCPPlayerHarness) lands in ovoscope 0.20.x; floor-pin so pip
+    # resolves it without --pre once published.
+    "ovoscope[media]>=0.20.0a1",
+]
+
+[project.urls]
+Homepage = "https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast"
+
+[project.entry-points."mycroft.plugin.audioservice"]
+ovos_chromecast = "ovos_media_plugin_chromecast.audio:ChromecastAudioService"
+
+[project.entry-points."opm.media.audio"]
+ovos-media-audio-plugin-chromecast = "ovos_media_plugin_chromecast.media:ChromecastOCPAudioService"
+
+[project.entry-points."opm.media.video"]
+ovos-media-video-plugin-chromecast = "ovos_media_plugin_chromecast.media:ChromecastOCPVideoService"
+
+[project.scripts]
+ovos-chromecast-autoconfigure = "ovos_media_plugin_chromecast.autoconfigure:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "ovos_media_plugin_chromecast.version.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ovos_media_plugin_chromecast*"]
+
+[tool.setuptools.package-data]
+ovos_media_plugin_chromecast = [
+    "*.json",
+    "locale/**/*",
+]
