@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5a3](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a3) (2026-09-26)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.5a2...0.1.5a3)
+
+**Merged pull requests:**
+
+- Update actions/checkout action to v7 [\#24](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/24) ([renovate[bot]](https://github.com/apps/renovate))
+
 ## [0.1.5a2](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a2) (2026-09-26)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.5a1...0.1.5a2)
