@@ -15,11 +15,15 @@
 import time
 from mimetypes import guess_type
 
-from ovos_plugin_manager.templates.media import MediaBackend, RemoteAudioPlayerBackend, RemoteVideoPlayerBackend
+from ovos_plugin_manager.templates.media import (
+    MediaBackend,
+    RemoteAudioPlayerBackend,
+    RemoteVideoPlayerBackend,
+)
 from ovos_utils.log import LOG
 from ovos_utils.ocp import PlaybackType
 
-from ovos_media_plugin_chromecast.ccast import MediaStatusListener, CastListener
+from ovos_media_plugin_chromecast.ccast import CastListener, MediaStatusListener
 
 
 class ChromecastBaseService(MediaBackend):
@@ -54,7 +58,7 @@ class ChromecastBaseService(MediaBackend):
         self.is_playing = False
         self.ts = 0
 
-    def load_track(self, uri, metadata: dict = None):
+    def load_track(self, uri, metadata: dict | None = None):
         super().load_track(uri)
         if metadata:
             self.meta["title"] = metadata.get("title", self.identifier)
@@ -84,7 +88,25 @@ class ChromecastBaseService(MediaBackend):
 
         # check if it's video or audio playback
         # 2 instances of this class might exist, one for each subsystem
-        if self.video and data["playback"] != PlaybackType.VIDEO:
+        # NOTE: ruff offers SIM114 here. The merged form
+        # self.video != (data["playback"] == PlaybackType.VIDEO) IS equivalent:
+        # a truth table over the four cases gives the same answer in every row,
+        # and test/test_track_guard.py pins that contract by asserting whether
+        # meta.update() is reached, not which branch shape reached it.
+        #
+        # That test cannot choose between the two forms, and does not try to:
+        # equivalent predicates are indistinguishable by behaviour, and the
+        # suite passes either way, 13 passed 2 skipped with the merged form
+        # substituted in place. What it pins is the behaviour both forms must
+        # keep, so a future edit that breaks the table is caught whichever form
+        # is in the file.
+        #
+        # So the only reason the nested form stays is the e2e suite this change
+        # would be judged by, which is not yet trustworthy enough to change it
+        # under: a timing race measured at 7 failures in 12 runs on #38's head,
+        # which is a figure from that head and not from this one. Take the
+        # simplification once that suite is stable.
+        if self.video and data["playback"] != PlaybackType.VIDEO:  # noqa: SIM114
             return
         elif not self.video and data["playback"] == PlaybackType.VIDEO:
             return

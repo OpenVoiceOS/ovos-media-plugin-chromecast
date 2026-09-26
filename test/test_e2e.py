@@ -24,10 +24,14 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 try:
-    from ovoscope import OCPPlayerHarness
     from ovos_utils.ocp import MediaEntry, PlaybackType, PlayerState
+    from ovoscope import OCPPlayerHarness
     HAVE_HARNESS = True
-except Exception:
+except Exception:  # noqa: BLE001 - see below
+    # Deliberately broad. ovoscope is an optional test-only dependency and a
+    # half-installed one raises more than ImportError on import; any failure
+    # here means the harness is unusable, and the suite skips rather than
+    # errors.
     HAVE_HARNESS = False
 
 # ``pychromecast`` is a heavy, network-bound, non-pip-installable engine; mock
@@ -53,8 +57,8 @@ sys.modules.setdefault("pychromecast.controllers", _controllers)
 sys.modules.setdefault("pychromecast.controllers.media", _media)
 sys.modules.setdefault("zeroconf", MagicMock())
 
-import ovos_media_plugin_chromecast.media as media_mod
-from ovos_media_plugin_chromecast.media import ChromecastOCPAudioService
+import ovos_media_plugin_chromecast.media as media_mod  # noqa: E402 - the stubs above must be in place first
+from ovos_media_plugin_chromecast.media import ChromecastOCPAudioService  # noqa: E402 - the stubs above must be in place first
 
 URI = "http://example.com/song.mp3"
 DEVICE = "Test Cast"
@@ -89,8 +93,8 @@ class TestChromecastEndToEnd(unittest.TestCase):
         with patch.object(media_mod.CastListener, "start_browser"), \
                 patch.object(media_mod.CastListener, "stop_discovery"), \
                 patch.object(media_mod.CastListener, "found_devices",
-                             {DEVICE: cast}):
-            with OCPPlayerHarness(backend_factory=_factory) as h:
+                             {DEVICE: cast}), \
+                OCPPlayerHarness(backend_factory=_factory) as h:
                 entry = MediaEntry(uri=URI, playback=PlaybackType.AUDIO)
 
                 h.play(entry)
@@ -114,8 +118,8 @@ class TestChromecastEndToEnd(unittest.TestCase):
         with patch.object(media_mod.CastListener, "start_browser"), \
                 patch.object(media_mod.CastListener, "stop_discovery"), \
                 patch.object(media_mod.CastListener, "found_devices",
-                             {DEVICE: cast}):
-            with OCPPlayerHarness(backend_factory=_factory) as h:
+                             {DEVICE: cast}), \
+                OCPPlayerHarness(backend_factory=_factory) as h:
                 self.assertIsInstance(h.backend, ChromecastOCPAudioService)
                 self.assertEqual(h.backend.supported_uris(),
                                  ["http", "https"])
