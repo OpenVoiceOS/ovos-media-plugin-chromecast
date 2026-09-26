@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5a2](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a2) (2026-09-26)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.5a1...0.1.5a2)
+
+**Merged pull requests:**
+
+- ci: replace the set-output command GitHub removed [\#39](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/39) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.1.5a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a1) (2026-09-02)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a12...0.1.5a1)
