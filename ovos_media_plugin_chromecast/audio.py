@@ -1,4 +1,5 @@
 from ovos_plugin_manager.templates.audio import AudioBackend
+from ovos_plugin_manager.templates.media import PlaybackEvent
 from ovos_utils.log import LOG
 
 from ovos_media_plugin_chromecast.media import ChromecastOCPAudioService
@@ -6,15 +7,23 @@ from ovos_media_plugin_chromecast.media import ChromecastOCPAudioService
 
 class ChromecastAudioService(AudioBackend):
     """
-        Chromecast Audio backend - old style plugin for ovos-audio (not ovos-media)
+        Chromecast Audio backend - old style plugin for ovos-audio (not
+        ovos-media). Wraps the MediaBackend v2 ``ChromecastOCPAudioService``
+        and bridges its ``PlaybackEvent.TRACK_START`` reports into the
+        legacy ``_track_start_callback`` this base class already stores via
+        ``set_track_start_callback`` (unchanged, inherited from
+        ``AudioBackend``).
     """
 
     def __init__(self, config, bus, name='chromecast'):
         super().__init__(config, bus, name)
         self.chromecast = ChromecastOCPAudioService(self.config, bus=self.bus)
+        self.chromecast.bind_event_reporter(self._on_chromecast_event)
 
-    def set_track_start_callback(self, callback_func):
-        self.chromecast.set_track_start_callback(callback_func)
+    def _on_chromecast_event(self, event, **data):
+        if event == PlaybackEvent.TRACK_START and self._track_start_callback:
+            self._track_start_callback(
+                self.track_info().get('name', f"{self.chromecast.identifier} Chromecast"))
 
     def supported_uris(self):
         return self.chromecast.supported_uris()

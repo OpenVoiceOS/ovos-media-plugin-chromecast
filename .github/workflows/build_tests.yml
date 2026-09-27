@@ -11,3 +11,9 @@ jobs:
     secrets: inherit
     with:
       python_versions: '["3.10", "3.11", "3.12", "3.13"]'
+      # TEMPORARY until ovos-plugin-manager>=3.0.0a1 is published: PyPI only
+      # has v1 OPM, which lacks PlaybackEvent and MediaBackend.report(); pull
+      # the v2 template branch so the build-tests job can import this plugin.
+      # Drop this override (and the opm floor bump in pyproject.toml) once
+      # 3.0.0a1 ships.
+      pre_install_pip: 'git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-backend-v2'

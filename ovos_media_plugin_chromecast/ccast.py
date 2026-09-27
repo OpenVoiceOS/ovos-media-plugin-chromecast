@@ -52,10 +52,22 @@ class CastListener(pychromecast.discovery.AbstractCastListener):
 
 
 class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
-    """Status media listener"""
-    track_changed_callback = None
-    track_stop_callback = None
-    bad_track_callback = None
+    """Status media listener.
+
+    Fires on the pychromecast status-update thread whenever the *device*
+    reports a player-state change, regardless of who caused it - our own
+    play()/pause()/resume()/stop() calls, or someone pausing/resuming/
+    stopping playback directly from the Cast app. These callbacks are the
+    only source of physical playback events for this backend; the
+    ``ChromecastBaseService`` methods that issue commands do not report
+    anything themselves.
+    """
+    track_changed_callback = None  # TRACK_START
+    paused_callback = None  # PAUSED
+    resumed_callback = None  # RESUMED
+    stopped_callback = None  # STOPPED (explicit/cancelled, not natural end)
+    track_stop_callback = None  # END_OF_MEDIA (natural end, idle_reason FINISHED)
+    bad_track_callback = None  # ERROR
 
     def __init__(self, name, cast):
         self.name = name
@@ -66,6 +78,22 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
         self.playback = PlaybackType.UNDEFINED
         self.duration = 0
 
+    def _payload(self, state):
+        return {
+            "state": state,
+            "duration": self.duration,
+            "image": self.image,
+            "uri": self.uri,
+            "playback": self.playback,
+            "name": self.name
+        }
+
+    def _reset(self):
+        self.uri = None
+        self.image = None
+        self.duration = 0
+        self.playback = PlaybackType.UNDEFINED
+
     def new_media_status(self, status):
         if status.content_type is None:
             self.playback = PlaybackType.UNDEFINED
@@ -73,66 +101,49 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
             self.playback = PlaybackType.AUDIO
         else:
             self.playback = PlaybackType.VIDEO
-        if status.player_state in ["PLAYING", 'BUFFERING']:
+
+        if status.player_state in ("PLAYING", "BUFFERING"):
             state = PlayerState.PLAYING
         elif status.player_state == "PAUSED":
-            state = PlayerState.PLAYING
+            state = PlayerState.PAUSED
         else:
             state = PlayerState.STOPPED
 
+        prev = self.state
         self.uri = status.content_id
         self.duration = status.duration or 0
-        if status.images:
-            self.image = status.images[0].url
-        else:
-            self.image = None
+        self.image = status.images[0].url if status.images else None
 
-        # NOTE: ignore callbacks on IDLE, it always happens right before playback
-        if self.track_changed_callback and \
-                self.state == PlayerState.STOPPED and \
-                status.player_state != "IDLE" and \
+        # NOTE: ignore callbacks on IDLE->PLAYING, it always happens right
+        # before playback actually starts
+        if self.track_changed_callback and prev == PlayerState.STOPPED and \
+                status.player_state != "IDLE" and state == PlayerState.PLAYING:
+            self.track_changed_callback(self._payload(state))
+        elif self.paused_callback and prev == PlayerState.PLAYING and \
+                state == PlayerState.PAUSED:
+            self.paused_callback(self._payload(state))
+        elif self.resumed_callback and prev == PlayerState.PAUSED and \
                 state == PlayerState.PLAYING:
-            self.track_changed_callback({
-                "state": state,
-                "duration": self.duration,
-                "image": self.image,
-                "uri": self.uri,
-                "playback": self.playback,
-                "name": self.name
-            })
-        elif self.track_stop_callback and \
-                status.idle_reason == "FINISHED" and \
-                status.player_state == "IDLE":
-            self.track_stop_callback({
-                "state": state,
-                "duration": self.duration,
-                "image": self.image,
-                "uri": self.uri,
-                "playback": self.playback,
-                "name": self.name
-            })
-            self.uri = None
-            self.image = None
-            self.duration = 0
-            self.playback = PlaybackType.UNDEFINED
-        elif self.bad_track_callback and \
-                status.idle_reason == "ERROR" and \
-                status.player_state == "IDLE":
-            pass  # dedicated handler in parent class already
+            self.resumed_callback(self._payload(state))
+        elif status.player_state == "IDLE" and status.idle_reason == "FINISHED":
+            if self.track_stop_callback:
+                self.track_stop_callback(self._payload(state))
+            self._reset()
+        elif status.player_state == "IDLE" and status.idle_reason == "ERROR":
+            if self.bad_track_callback:
+                self.bad_track_callback(self._payload(state))
+            self._reset()
+        elif status.player_state == "IDLE" and \
+                prev in (PlayerState.PLAYING, PlayerState.PAUSED):
+            # explicit stop (ours or from the Cast app), not a natural end
+            if self.stopped_callback:
+                self.stopped_callback(self._payload(state))
+            self._reset()
+
         self.state = state
 
     def load_media_failed(self, item, error_code):
         self.state = PlayerState.STOPPED
         if self.bad_track_callback:
-            self.bad_track_callback({
-                "state": self.state,
-                "duration": self.duration,
-                "image": self.image,
-                "uri": self.uri,
-                "playback": self.playback,
-                "name": self.name
-            })
-        self.uri = None
-        self.image = None
-        self.duration = 0
-        self.playback = PlaybackType.UNDEFINED
+            self.bad_track_callback(self._payload(self.state))
+        self._reset()

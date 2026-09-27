@@ -15,7 +15,9 @@
 import time
 from mimetypes import guess_type
 
-from ovos_plugin_manager.templates.media import MediaBackend, RemoteAudioPlayerBackend, RemoteVideoPlayerBackend
+from ovos_plugin_manager.templates.media import (MediaBackend, PlaybackEvent,
+                                                  RemoteAudioPlayerBackend,
+                                                  RemoteVideoPlayerBackend)
 from ovos_utils.log import LOG
 from ovos_utils.ocp import PlaybackType
 
@@ -26,25 +28,40 @@ class ChromecastBaseService(MediaBackend):
     """
         Backend for playback on chromecast. Using the default media
         playback controller included in pychromecast.
+
+        Chromecast is an *external-events* backend: the device itself
+        notifies the plugin (via ``MediaStatusListener``, on pychromecast's
+        own status-update thread) whenever playback actually starts, pauses,
+        resumes, stops or ends - whether that was caused by this plugin's
+        own play()/pause()/resume()/stop() calls or by someone controlling
+        the same Chromecast from the Cast app. Those callbacks are the only
+        place physical ``PlaybackEvent``s are reported; the command methods
+        below only issue the corresponding pychromecast call and let the
+        listener report what actually happened.
     """
+
+    can_seek = True
+    can_pause = True
 
     def __init__(self, config, bus=None, video=False):
         super().__init__(config, bus)
         self.video = video
         self.connection_attempts = 0
-        self.bus = bus
-        self.config = config
 
         if self.config is None or 'identifier' not in self.config:
             raise ValueError("Chromecast identifier not set!")  # Can't connect since no id is specified
         else:
             self.identifier = self.config['identifier']
 
+        MediaStatusListener.track_changed_callback = self.on_track_start
+        MediaStatusListener.paused_callback = self.on_track_paused
+        MediaStatusListener.resumed_callback = self.on_track_resumed
+        MediaStatusListener.stopped_callback = self.on_track_stopped
         MediaStatusListener.track_stop_callback = self.on_track_end
         MediaStatusListener.bad_track_callback = self.on_track_error
-        MediaStatusListener.track_changed_callback = self.on_track_start
         CastListener.start_browser()
 
+        self.uri = None
         self.meta = {"name": self.identifier,
                      "uri": None,
                      "title": self.identifier,
@@ -54,12 +71,14 @@ class ChromecastBaseService(MediaBackend):
         self.is_playing = False
         self.ts = 0
 
-    def load_track(self, uri, metadata: dict = None):
-        super().load_track(uri)
+    def load_track(self, uri: str, metadata: dict = None) -> bool:
+        self.uri = uri
+        self.meta["uri"] = uri
         if metadata:
             self.meta["title"] = metadata.get("title", self.identifier)
             self.meta["thumbnail"] = metadata.get("thumbnail", "")
             self.meta["duration"] = metadata.get("duration", 0)
+        return True
 
     def reset_metadata(self):
         self.is_playing = False  # not plugin initiated
@@ -77,9 +96,8 @@ class ChromecastBaseService(MediaBackend):
         # check if track changed in our device
         if self.meta["uri"] is not None and \
                 data["uri"] != self.meta["uri"]:
-            # TODO - end of media, or just update OCP info ?
             LOG.info(f"Chromecast track changed externally: {data}")
-            self.on_track_end(self.meta)
+            self.on_track_end({"name": self.identifier, "uri": self.meta["uri"]})
             return
 
         # check if it's video or audio playback
@@ -90,37 +108,76 @@ class ChromecastBaseService(MediaBackend):
             return
 
         # check if this is our track, trigger callback
-        if data["uri"] == self._now_playing and data != self.meta:
+        if data["uri"] == self.uri and data != self.meta:
             LOG.info(f"Chromecast playback started: {data}")
             self.meta.update(data)
             self.ts = time.time()
-            if self._track_start_callback:
-                self._track_start_callback(self.track_info().get('name', f"{self.identifier} Chromecast"))
+            self.report(PlaybackEvent.TRACK_START)
+
+    def on_track_paused(self, data):
+        if not self.is_playing:
+            return  # not plugin initiated
+        if data["name"] != self.identifier:
+            return
+        LOG.info(f"Chromecast paused: {data}")
+        self.report(PlaybackEvent.PAUSED)
+
+    def on_track_resumed(self, data):
+        if not self.is_playing:
+            return  # not plugin initiated
+        if data["name"] != self.identifier:
+            return
+        LOG.info(f"Chromecast resumed: {data}")
+        self.report(PlaybackEvent.RESUMED)
+
+    def on_track_stopped(self, data):
+        """Cast device went IDLE for a reason other than FINISHED/ERROR -
+        i.e. playback was explicitly stopped, either by our own stop() or
+        by someone stopping it from the Cast app.
+
+        ``report_track_end`` can only tell "our stop" from "natural end"
+        (its two-way mapping is flag -> STOPPED, no-flag -> END_OF_MEDIA);
+        it has no way to express "external stop", which is a third,
+        distinct case this listener DOES know how to detect (idle_reason
+        is neither FINISHED nor ERROR). So: when we requested the stop,
+        delegate to ``report_track_end`` (it reports STOPPED and clears the
+        flag correctly). When we did not, the two-way helper would
+        misreport this as END_OF_MEDIA - report STOPPED directly instead.
+        """
+        if not self.is_playing:
+            return  # not plugin initiated
+        if data["name"] != self.identifier:
+            return
+        LOG.info(f"Chromecast stopped: {data}")
+        uri = self.meta.get("uri")
+        self.reset_metadata()
+        if self._stop_requested:
+            self.report_track_end(uri=uri)
+        else:
+            self.report(PlaybackEvent.STOPPED, uri=uri)
 
     def on_track_end(self, data):
         if not self.is_playing:
             return  # not plugin initiated
         if data["name"] != self.identifier:
             return
-        if data["uri"] == self.meta["uri"]:
+        uri = self.meta.get("uri")
+        if data["uri"] == uri:
             LOG.info(f"End of media: {data}")
-            self.reset_metadata()
-
-        if self._track_start_callback:
-            self._track_start_callback(None)
-        # natural end-of-media (chromecast reported end on its own, no
-        # stop() requested by us) - ocp_stop() is idempotent (no-ops once
-        # self._now_playing is None), so it is safe to call here even
-        # when stop() already triggered it; this is the only path that
-        # reports a *natural* end-of-media upward
-        self.ocp_stop()
+        self.reset_metadata()
+        # natural end-of-media (idle_reason FINISHED): report_track_end's
+        # flag check naturally resolves to END_OF_MEDIA here unless stop()
+        # was called at the exact same instant the track finished on its
+        # own, in which case reporting STOPPED instead is acceptable.
+        self.report_track_end(uri=uri)
 
     def on_track_error(self, data):
         if not self.is_playing:
             return  # not plugin initiated
         LOG.warning(f"Chromecast error: {data}")
+        uri = self.meta.get("uri")
         self.reset_metadata()
-        self.ocp_error()
+        self.report_track_end(uri=uri, error=str(data))
 
     def supported_uris(self):
         """ Return supported uris of chromecast. """
@@ -144,7 +201,7 @@ class ChromecastBaseService(MediaBackend):
 
         cast.wait()  # Make sure the device is ready to receive command
 
-        self.meta["uri"] = track = self._now_playing
+        self.meta["uri"] = track = self.uri
 
         mime = guess_type(track)[0] or 'audio/mp3'
         self.is_playing = True
@@ -152,9 +209,17 @@ class ChromecastBaseService(MediaBackend):
                                          thumb=self.meta.get("thumbnail"),
                                          title=self.meta.get("title", track.split("/")[-1]))
 
-    def stop(self):
-        """ Stop playback and quit app. """
-        self.reset_metadata()
+    def _stop(self) -> bool:
+        """ Stop playback and quit app.
+
+        ``stop()`` (concrete on ``MediaBackend``) sets ``_stop_requested``
+        before calling this. Does not reset metadata or report anything
+        directly - the device's own status update (picked up by
+        ``MediaStatusListener`` and routed to ``on_track_stopped``) is what
+        actually reports ``PlaybackEvent.STOPPED``. Resetting ``is_playing``
+        here would make that callback's "not plugin initiated" guard drop
+        the real event.
+        """
         if self.cast is not None and self.cast.media_controller.is_playing:
             self.cast.media_controller.stop()
             return True
