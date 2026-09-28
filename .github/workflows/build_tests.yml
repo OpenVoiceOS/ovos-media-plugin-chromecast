@@ -1,13 +1,47 @@
 name: Build Tests
 
+# CANARY BRANCH — not for merge. It exercises gh-automations#154 against a real
+# downstream before the workflow change is offered.
+#
+# The file keeps the name build_tests.yml because a dispatch resolves a workflow
+# name from the DEFAULT branch and then runs the version on the chosen ref. A
+# file under a new name is refused with a 404.
+#
+# workflow_dispatch only: the failing arm must never read as a red on a pull
+# request.
+#
+# `uses:` AND gh_automations_ref both name the pull request branch. The new job
+# takes its helper script from gh_automations_ref, so a canary that pinned only
+# `uses:` would run the new job against the script on dev, where it does not
+# exist.
 on:
-  pull_request:
-    branches: [dev, master]
   workflow_dispatch:
 
 jobs:
-  build:
-    uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@dev
+  # Must stay silent: a directory token covers every test file under it.
+  directory_token_is_silent:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@fix/test-path-coverage-warning
     secrets: inherit
     with:
-      python_versions: '["3.10", "3.11", "3.12", "3.13"]'
+      gh_automations_ref: fix/test-path-coverage-warning
+      python_versions: '["3.12"]'
+      test_path: test
+
+  # Must warn and still pass: a file list leaves two of three test files out.
+  file_list_warns_without_failing:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@fix/test-path-coverage-warning
+    secrets: inherit
+    with:
+      gh_automations_ref: fix/test-path-coverage-warning
+      python_versions: '["3.12"]'
+      test_path: test/test_backends.py
+
+  # Must fail: the same call with test_path_strict set.
+  strict_turns_the_warning_into_a_failure:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@fix/test-path-coverage-warning
+    secrets: inherit
+    with:
+      gh_automations_ref: fix/test-path-coverage-warning
+      python_versions: '["3.12"]'
+      test_path: test/test_backends.py
+      test_path_strict: true
