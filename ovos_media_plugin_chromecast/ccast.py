@@ -1,16 +1,17 @@
+from typing import ClassVar
+
 import pychromecast
 import pychromecast.controllers.media
 import zeroconf
-
 from ovos_utils.log import LOG
-from ovos_utils.ocp import PlayerState, PlaybackType
+from ovos_utils.ocp import PlaybackType, PlayerState
 
 
 class CastListener(pychromecast.discovery.AbstractCastListener):
     """Listener for discovering chromecasts."""
     browser = None
     zconf = None
-    found_devices = {}
+    found_devices: ClassVar[dict] = {}
 
     @classmethod
     def start_browser(cls):
@@ -73,7 +74,11 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
             self.playback = PlaybackType.AUDIO
         else:
             self.playback = PlaybackType.VIDEO
-        if status.player_state in ["PLAYING", 'BUFFERING']:
+        # NOTE: PAUSED maps to PLAYING, which is wrong: PlayerState.PAUSED
+        # exists and is never used, so a cast paused from the Google Home app
+        # is reported to OCP as still playing. Correcting it needs the suite's
+        # test isolation fixed first; see the task that carries the evidence.
+        if status.player_state in ["PLAYING", 'BUFFERING']:  # noqa: SIM114
             state = PlayerState.PLAYING
         elif status.player_state == "PAUSED":
             state = PlayerState.PLAYING
