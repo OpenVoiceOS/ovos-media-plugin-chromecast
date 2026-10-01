@@ -76,7 +76,7 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
         if status.player_state in ["PLAYING", 'BUFFERING']:
             state = PlayerState.PLAYING
         elif status.player_state == "PAUSED":
-            state = PlayerState.PLAYING
+            state = PlayerState.PAUSED
         else:
             state = PlayerState.STOPPED
 
