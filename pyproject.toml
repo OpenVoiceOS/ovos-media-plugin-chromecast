@@ -32,7 +32,7 @@ test = [
 Homepage = "https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast"
 
 [project.entry-points."mycroft.plugin.audioservice"]
-ovos_chromecast = "ovos_media_plugin_chromecast.audio:ChromecastAudioService"
+ovos_chromecast = "ovos_media_plugin_chromecast.audio"
 
 [project.entry-points."opm.media.audio"]
 ovos-media-audio-plugin-chromecast = "ovos_media_plugin_chromecast.media:ChromecastOCPAudioService"
