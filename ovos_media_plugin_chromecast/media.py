@@ -15,11 +15,15 @@
 import time
 from mimetypes import guess_type
 
-from ovos_plugin_manager.templates.media import MediaBackend, RemoteAudioPlayerBackend, RemoteVideoPlayerBackend
+from ovos_plugin_manager.templates.media import (
+    MediaBackend,
+    RemoteAudioPlayerBackend,
+    RemoteVideoPlayerBackend,
+)
 from ovos_utils.log import LOG
 from ovos_utils.ocp import PlaybackType
 
-from ovos_media_plugin_chromecast.ccast import MediaStatusListener, CastListener
+from ovos_media_plugin_chromecast.ccast import CastListener, MediaStatusListener
 
 
 class ChromecastBaseService(MediaBackend):
@@ -54,7 +58,7 @@ class ChromecastBaseService(MediaBackend):
         self.is_playing = False
         self.ts = 0
 
-    def load_track(self, uri, metadata: dict = None):
+    def load_track(self, uri, metadata: dict | None = None):
         super().load_track(uri)
         if metadata:
             self.meta["title"] = metadata.get("title", self.identifier)
@@ -84,7 +88,8 @@ class ChromecastBaseService(MediaBackend):
 
         # check if it's video or audio playback
         # 2 instances of this class might exist, one for each subsystem
-        if self.video and data["playback"] != PlaybackType.VIDEO:
+        # test/test_track_guard.py pins the truth table of these two branches.
+        if self.video and data["playback"] != PlaybackType.VIDEO:  # noqa: SIM114
             return
         elif not self.video and data["playback"] == PlaybackType.VIDEO:
             return

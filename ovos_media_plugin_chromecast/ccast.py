@@ -1,16 +1,17 @@
+from typing import ClassVar
+
 import pychromecast
 import pychromecast.controllers.media
 import zeroconf
-
 from ovos_utils.log import LOG
-from ovos_utils.ocp import PlayerState, PlaybackType
+from ovos_utils.ocp import PlaybackType, PlayerState
 
 
 class CastListener(pychromecast.discovery.AbstractCastListener):
     """Listener for discovering chromecasts."""
     browser = None
     zconf = None
-    found_devices = {}
+    found_devices: ClassVar[dict] = {}
 
     @classmethod
     def start_browser(cls):
@@ -73,7 +74,8 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
             self.playback = PlaybackType.AUDIO
         else:
             self.playback = PlaybackType.VIDEO
-        if status.player_state in ["PLAYING", 'BUFFERING']:
+        # PAUSED maps to PLAYING, so OCP never sees PlayerState.PAUSED.
+        if status.player_state in ["PLAYING", 'BUFFERING']:  # noqa: SIM114
             state = PlayerState.PLAYING
         elif status.player_state == "PAUSED":
             state = PlayerState.PLAYING
