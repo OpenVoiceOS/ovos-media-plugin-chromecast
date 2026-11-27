@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/1.0.0a1) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.8a1...1.0.0a1)
+
+**Breaking changes:**
+
+- feat!: port to MediaBackend v2 - report events, no bus state emission [\#36](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/36) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.8a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.8a1) (2026-11-27)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.7a1...0.1.8a1)
