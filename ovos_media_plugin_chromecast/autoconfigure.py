@@ -1,3 +1,4 @@
+import sys
 from pprint import pprint
 
 import pychromecast
@@ -10,15 +11,23 @@ def main():
 
     print("\nScanning...")
     casts, browser = pychromecast.get_chromecasts()
-    for cast in casts:
-        print(f"    - Found Chromecast: {cast.cast_info.friendly_name} - {cast.cast_info.host}:{cast.cast_info.port}")
+    try:
+        for cast in casts:
+            print(f"    - Found Chromecast: {cast.cast_info.friendly_name} - {cast.cast_info.host}:{cast.cast_info.port}")
+        devices = [cast.cast_info.friendly_name for cast in casts]
+    finally:
+        # get_chromecasts() returns a browser that keeps the mDNS data fresh
+        # and leaves three threads running until it is stopped. Nothing below
+        # needs fresh data: the names are already read. Stopping here also
+        # means the multicast traffic does not continue for as long as the
+        # user leaves the prompt below unanswered.
+        browser.stop_discovery()
 
     cfg = MycroftUserConfig()
 
-    devices = [cast.cast_info.friendly_name for cast in casts]
     if not devices:
         print("ERROR: no chromecast devices found")
-        exit(1)
+        sys.exit(1)
 
     print(f"\nFound devices: {devices}")
     if len(devices) == 1:

@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.1.8a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.8a1) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.7a1...0.1.8a1)
+
+**Merged pull requests:**
+
+- fix: point the legacy audioservice entry point at the module [\#50](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/50) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
+## [0.1.7a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.7a1) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.6a2...0.1.7a1)
+
+**Merged pull requests:**
+
+- fix: stop the discovery browser, and clear ruff on dev [\#40](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/40) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
+## [0.1.6a2](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.6a2) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.6a1...0.1.6a2)
+
+**Merged pull requests:**
+
+- fix: accept ovos-config 3.x [\#46](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/46) ([goldyfruit](https://github.com/goldyfruit))
+- ci: the build test runs the suite [\#37](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/37) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
+## [0.1.6a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.6a1) (2026-09-26)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.5a3...0.1.6a1)
+
+**Merged pull requests:**
+
+- fix\(ci\): publish stable through the shared workflow, not setup.py [\#43](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/43) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
+## [0.1.5a3](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a3) (2026-09-26)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.5a2...0.1.5a3)
+
+**Merged pull requests:**
+
+- Update actions/checkout action to v7 [\#24](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/24) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [0.1.5a2](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a2) (2026-09-26)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.5a1...0.1.5a2)
+
+**Merged pull requests:**
+
+- ci: replace the set-output command GitHub removed [\#39](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/39) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.1.5a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.5a1) (2026-09-02)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.4a12...0.1.5a1)

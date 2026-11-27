@@ -42,10 +42,10 @@ sys.modules.setdefault("pychromecast.controllers.media",
 sys.modules.setdefault("pychromecast.discovery", _pychromecast.discovery)
 sys.modules.setdefault("zeroconf", MagicMock())
 
-from ovos_plugin_manager.templates.media import PlaybackEvent
+from ovos_plugin_manager.templates.media import PlaybackEvent  # noqa: E402 - the stubs above must be in place first
 
-from ovos_media_plugin_chromecast.media import ChromecastOCPAudioService
-from ovos_media_plugin_chromecast.ccast import CastListener
+from ovos_media_plugin_chromecast.ccast import CastListener  # noqa: E402 - the stubs above must be in place first
+from ovos_media_plugin_chromecast.media import ChromecastOCPAudioService  # noqa: E402 - the stubs above must be in place first
 
 _IDENTIFIER = "Living Room TV"
 _CFG = {"identifier": _IDENTIFIER}
