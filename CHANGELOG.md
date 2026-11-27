@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.6a2](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.6a2) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.6a1...0.1.6a2)
+
+**Merged pull requests:**
+
+- fix: accept ovos-config 3.x [\#46](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/46) ([goldyfruit](https://github.com/goldyfruit))
+- ci: the build test runs the suite [\#37](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/37) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.1.6a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.6a1) (2026-09-26)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.5a3...0.1.6a1)
