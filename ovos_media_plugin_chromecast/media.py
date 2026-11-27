@@ -145,7 +145,8 @@ class ChromecastBaseService(MediaBackend):
 
         cast = self.cast
         if cast is None:
-            raise RuntimeError(f"Unknown Chromecast device: {self.identifier}")
+            LOG.error(f"Unknown Chromecast device: {self.identifier}")
+            return
 
         cast.wait()  # Make sure the device is ready to receive command
 
