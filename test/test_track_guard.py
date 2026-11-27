@@ -50,8 +50,9 @@ class TestVideoAudioGuard(unittest.TestCase):
         svc.identifier = "dev"
         svc.is_playing = True
         svc.meta = {"uri": None}
-        svc._now_playing = "http://example.invalid/a.mp3"
-        svc._track_start_callback = None
+        svc.uri = "http://example.invalid/a.mp3"
+        svc._playing_uri = None
+        svc.report = lambda event, **data: None
         svc.ts = 0
         return svc
 

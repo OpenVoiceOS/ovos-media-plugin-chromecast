@@ -15,9 +15,12 @@
 import time
 from mimetypes import guess_type
 
-from ovos_plugin_manager.templates.media import (MediaBackend, PlaybackEvent,
-                                                  RemoteAudioPlayerBackend,
-                                                  RemoteVideoPlayerBackend)
+from ovos_plugin_manager.templates.media import (
+    MediaBackend,
+    PlaybackEvent,
+    RemoteAudioPlayerBackend,
+    RemoteVideoPlayerBackend,
+)
 from ovos_utils.log import LOG
 from ovos_utils.ocp import PlaybackType
 
@@ -61,7 +64,8 @@ class ChromecastBaseService(MediaBackend):
         MediaStatusListener.bad_track_callback = self.on_track_error
         CastListener.start_browser()
 
-        self.uri = None
+        self.uri = None  # the track load_track() received
+        self._playing_uri = None  # the track the device reported as started
         self.meta = {"name": self.identifier,
                      "uri": None,
                      "title": self.identifier,
@@ -71,7 +75,7 @@ class ChromecastBaseService(MediaBackend):
         self.is_playing = False
         self.ts = 0
 
-    def load_track(self, uri: str, metadata: dict = None) -> bool:
+    def load_track(self, uri: str, metadata: dict | None = None) -> bool:
         self.uri = uri
         self.meta["uri"] = uri
         if metadata:
@@ -84,6 +88,20 @@ class ChromecastBaseService(MediaBackend):
         self.is_playing = False  # not plugin initiated
         self.ts = 0
         self.meta["uri"] = None
+        self._playing_uri = None
+
+    def _ended_uri(self, data):
+        return data.get("uri") or self._playing_uri or self.uri
+
+    def _report_stale_end(self, uri, error=None):
+        """Report the end of a track that a newer load replaced.
+
+        The daemon drops it by its uri. The new track keeps its state.
+        """
+        if error is None:
+            self.report(PlaybackEvent.END_OF_MEDIA, uri=uri)
+        else:
+            self.report(PlaybackEvent.ERROR, error=str(error), uri=uri)
 
     def on_track_start(self, data):
         if not self.is_playing:
@@ -94,10 +112,11 @@ class ChromecastBaseService(MediaBackend):
             return
 
         # check if track changed in our device
-        if self.meta["uri"] is not None and \
-                data["uri"] != self.meta["uri"]:
+        if data["uri"] != self.uri:
             LOG.info(f"Chromecast track changed externally: {data}")
-            self.on_track_end({"name": self.identifier, "uri": self.meta["uri"]})
+            if self._playing_uri is not None:
+                self.on_track_end({"name": self.identifier,
+                                   "uri": self._playing_uri})
             return
 
         # check if it's video or audio playback
@@ -109,11 +128,11 @@ class ChromecastBaseService(MediaBackend):
             return
 
         # check if this is our track, trigger callback
-        if data["uri"] == self.uri and data != self.meta:
-            LOG.info(f"Chromecast playback started: {data}")
-            self.meta.update(data)
-            self.ts = time.time()
-            self.report(PlaybackEvent.TRACK_START)
+        LOG.info(f"Chromecast playback started: {data}")
+        self.meta.update(data)
+        self._playing_uri = self.uri
+        self.ts = time.time()
+        self.report(PlaybackEvent.TRACK_START, uri=self.uri)
 
     def on_track_paused(self, data):
         if not self.is_playing:
@@ -150,7 +169,10 @@ class ChromecastBaseService(MediaBackend):
         if data["name"] != self.identifier:
             return
         LOG.info(f"Chromecast stopped: {data}")
-        uri = self.meta.get("uri")
+        uri = self._ended_uri(data)
+        if uri != self.uri:
+            self._report_stale_end(uri)
+            return
         self.reset_metadata()
         if self._stop_requested:
             self.report_track_end(uri=uri)
@@ -162,9 +184,11 @@ class ChromecastBaseService(MediaBackend):
             return  # not plugin initiated
         if data["name"] != self.identifier:
             return
-        uri = self.meta.get("uri")
-        if data["uri"] == uri:
-            LOG.info(f"End of media: {data}")
+        uri = self._ended_uri(data)
+        LOG.info(f"End of media: {data}")
+        if uri != self.uri:
+            self._report_stale_end(uri)
+            return
         self.reset_metadata()
         # natural end-of-media (idle_reason FINISHED): report_track_end's
         # flag check naturally resolves to END_OF_MEDIA here unless stop()
@@ -176,7 +200,10 @@ class ChromecastBaseService(MediaBackend):
         if not self.is_playing:
             return  # not plugin initiated
         LOG.warning(f"Chromecast error: {data}")
-        uri = self.meta.get("uri")
+        uri = self._ended_uri(data)
+        if uri != self.uri:
+            self._report_stale_end(uri, error=data)
+            return
         self.reset_metadata()
         self.report_track_end(uri=uri, error=str(data))
 
@@ -252,18 +279,19 @@ class ChromecastBaseService(MediaBackend):
         CastListener.stop_discovery()
 
     def get_track_length(self):
-        """
-        getting the duration of the audio in milliseconds
-        """
-        return self.meta.get("duration", self.get_track_position()) * 1000
+        """Duration in milliseconds: None when nothing plays, -1 when unknown."""
+        if self._playing_uri is None:
+            return None
+        duration = self.meta.get("duration")
+        if not duration:
+            return -1
+        return int(duration * 1000)
 
     def get_track_position(self):
-        """
-        get current position in milliseconds
-        """
-        if not self.ts:
-            return 0
-        return (time.time() - self.ts) * 1000  # calculate approximate
+        """Approximate position in milliseconds, None when nothing plays."""
+        if self._playing_uri is None:
+            return None
+        return int((time.time() - self.ts) * 1000)
 
     def set_track_position(self, milliseconds):
         """

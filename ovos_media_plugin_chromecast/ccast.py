@@ -75,22 +75,25 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
         self.cast = cast
         self.state = PlayerState.STOPPED
         self.uri = None
+        # uri of the last track reported as started, until it ends
+        self.started_uri = None
         self.image = None
         self.playback = PlaybackType.UNDEFINED
         self.duration = 0
 
-    def _payload(self, state):
+    def _payload(self, state, uri=None):
         return {
             "state": state,
             "duration": self.duration,
             "image": self.image,
-            "uri": self.uri,
+            "uri": uri or self.uri,
             "playback": self.playback,
             "name": self.name
         }
 
     def _reset(self):
         self.uri = None
+        self.started_uri = None
         self.image = None
         self.duration = 0
         self.playback = PlaybackType.UNDEFINED
@@ -115,11 +118,13 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
         self.duration = status.duration or 0
         self.image = status.images[0].url if status.images else None
 
-        # NOTE: ignore callbacks on IDLE->PLAYING, it always happens right
-        # before playback actually starts
-        if self.track_changed_callback and prev == PlayerState.STOPPED and \
-                status.player_state != "IDLE" and state == PlayerState.PLAYING:
-            self.track_changed_callback(self._payload(state))
+        # A load while a track plays changes content_id without a pass
+        # through STOPPED, so a new track is detected by its uri.
+        if state == PlayerState.PLAYING and self.uri and \
+                self.uri != self.started_uri:
+            self.started_uri = self.uri
+            if self.track_changed_callback:
+                self.track_changed_callback(self._payload(state))
         elif self.paused_callback and prev == PlayerState.PLAYING and \
                 state == PlayerState.PAUSED:
             self.paused_callback(self._payload(state))
@@ -128,17 +133,17 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
             self.resumed_callback(self._payload(state))
         elif status.player_state == "IDLE" and status.idle_reason == "FINISHED":
             if self.track_stop_callback:
-                self.track_stop_callback(self._payload(state))
+                self.track_stop_callback(self._payload(state, self.started_uri))
             self._reset()
         elif status.player_state == "IDLE" and status.idle_reason == "ERROR":
             if self.bad_track_callback:
-                self.bad_track_callback(self._payload(state))
+                self.bad_track_callback(self._payload(state, self.started_uri))
             self._reset()
         elif status.player_state == "IDLE" and \
                 prev in (PlayerState.PLAYING, PlayerState.PAUSED):
             # explicit stop (ours or from the Cast app), not a natural end
             if self.stopped_callback:
-                self.stopped_callback(self._payload(state))
+                self.stopped_callback(self._payload(state, self.started_uri))
             self._reset()
 
         self.state = state
