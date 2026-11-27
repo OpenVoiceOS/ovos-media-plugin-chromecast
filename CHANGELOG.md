@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.7a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.7a1) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.6a2...0.1.7a1)
+
+**Merged pull requests:**
+
+- fix: stop the discovery browser, and clear ruff on dev [\#40](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/40) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.1.6a2](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.6a2) (2026-11-27)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.6a1...0.1.6a2)
