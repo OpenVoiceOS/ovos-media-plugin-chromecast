@@ -74,10 +74,7 @@ class MediaStatusListener(pychromecast.controllers.media.MediaStatusListener):
             self.playback = PlaybackType.AUDIO
         else:
             self.playback = PlaybackType.VIDEO
-        # NOTE: PAUSED maps to PLAYING, which is wrong: PlayerState.PAUSED
-        # exists and is never used, so a cast paused from the Google Home app
-        # is reported to OCP as still playing. Correcting it needs the suite's
-        # test isolation fixed first; see the task that carries the evidence.
+        # PAUSED maps to PLAYING, so OCP never sees PlayerState.PAUSED.
         if status.player_state in ["PLAYING", 'BUFFERING']:  # noqa: SIM114
             state = PlayerState.PLAYING
         elif status.player_state == "PAUSED":

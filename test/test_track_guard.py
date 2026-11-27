@@ -1,8 +1,8 @@
 """The subsystem guard in ``on_track_start``.
 
 Two instances of the backend exist, one per subsystem. The guard that makes
-each ignore the other's tracks was two branches and is now one comparison,
-so the truth table is pinned here rather than eyeballed.
+each ignore the other's tracks has two branches, so the truth table is
+pinned here.
 """
 import sys
 import unittest
@@ -10,11 +10,22 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 # ``pychromecast`` is network-bound and heavy, and the plugin imports it at
-# module load. Mock the package tree the way test_e2e.py does.
-for _mod in ("pychromecast", "pychromecast.controllers",
-             "pychromecast.controllers.media", "pychromecast.discovery",
-             "zeroconf"):
-    sys.modules.setdefault(_mod, MagicMock())
+# module load. CastListener subclasses AbstractCastListener, so that base
+# must be a real class, as in test_backends.py.
+_pychromecast = MagicMock()
+
+
+class _AbstractCastListener:
+    pass
+
+
+_pychromecast.discovery.AbstractCastListener = _AbstractCastListener
+sys.modules.setdefault("pychromecast", _pychromecast)
+sys.modules.setdefault("pychromecast.controllers", _pychromecast.controllers)
+sys.modules.setdefault("pychromecast.controllers.media",
+                       _pychromecast.controllers.media)
+sys.modules.setdefault("pychromecast.discovery", _pychromecast.discovery)
+sys.modules.setdefault("zeroconf", MagicMock())
 
 from ovos_utils.ocp import PlaybackType, PlayerState  # noqa: E402 - the stubs above must be in place first
 
@@ -22,11 +33,10 @@ from ovos_media_plugin_chromecast import media as media_mod  # noqa: E402 - the 
 
 
 class TestVideoAudioGuard(unittest.TestCase):
-    """``on_track_start``'s subsystem guard, restructured from two branches.
+    """``on_track_start``'s subsystem guard.
 
     Two instances of the backend exist, one per subsystem, and each must
-    ignore the other's tracks. The truth table is the contract, and it is
-    what makes the restructure checkable rather than eyeballed.
+    ignore the other's tracks. The truth table is the contract.
     """
 
     @staticmethod

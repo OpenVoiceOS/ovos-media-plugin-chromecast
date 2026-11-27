@@ -88,24 +88,7 @@ class ChromecastBaseService(MediaBackend):
 
         # check if it's video or audio playback
         # 2 instances of this class might exist, one for each subsystem
-        # NOTE: ruff offers SIM114 here. The merged form
-        # self.video != (data["playback"] == PlaybackType.VIDEO) IS equivalent:
-        # a truth table over the four cases gives the same answer in every row,
-        # and test/test_track_guard.py pins that contract by asserting whether
-        # meta.update() is reached, not which branch shape reached it.
-        #
-        # That test cannot choose between the two forms, and does not try to:
-        # equivalent predicates are indistinguishable by behaviour, and the
-        # suite passes either way, 13 passed 2 skipped with the merged form
-        # substituted in place. What it pins is the behaviour both forms must
-        # keep, so a future edit that breaks the table is caught whichever form
-        # is in the file.
-        #
-        # So the only reason the nested form stays is the e2e suite this change
-        # would be judged by, which is not yet trustworthy enough to change it
-        # under: a timing race measured at 7 failures in 12 runs on #38's head,
-        # which is a figure from that head and not from this one. Take the
-        # simplification once that suite is stable.
+        # test/test_track_guard.py pins the truth table of these two branches.
         if self.video and data["playback"] != PlaybackType.VIDEO:  # noqa: SIM114
             return
         elif not self.video and data["playback"] == PlaybackType.VIDEO:
