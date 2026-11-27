@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.8a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.8a1) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.7a1...0.1.8a1)
+
+**Merged pull requests:**
+
+- fix: point the legacy audioservice entry point at the module [\#50](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/pull/50) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.1.7a1](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/tree/0.1.7a1) (2026-11-27)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-chromecast/compare/0.1.6a2...0.1.7a1)
