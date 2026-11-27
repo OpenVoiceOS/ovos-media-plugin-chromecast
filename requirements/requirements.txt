@@ -1,3 +1,0 @@
-ovos-plugin-manager>=0.0.26,<3.0.0
-pychromecast
-zeroconf
